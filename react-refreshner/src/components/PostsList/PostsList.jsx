@@ -1,65 +1,43 @@
 import classes from './PostsList.module.css';
 
-import NewPost from '../NewPost/NewPost';
-import Modal from '../Modal/Modal';
+import { useLoaderData } from 'react-router-dom';
 import Post from '../Post/Post';
-import { useEffect, useState } from 'react';
 
-const PostsList = ({ isPosting, onStopPosting }) => {
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setLoading] = useState(false);
+const PostsList = () => {
+  const posts = useLoaderData();
 
-  useEffect(() => {
-    (async function () {
-      setLoading(true);
-      const response = await fetch('http://localhost:8080/posts');
+  // const [posts, setPosts] = useState([]);
+  // const [isLoading, setLoading] = useState(false);
 
-      const data = await response.json();
+  // useEffect(() => {
+  //   (async function () {
+  //     setLoading(true);
+  //     const response = await fetch('http://localhost:8080/posts');
 
-      setPosts(data.posts);
-      setLoading(false);
-    })();
-  }, []);
+  //     const data = await response.json();
 
-  const addPostHandler = async (postData) => {
-    const response = await fetch('http://localhost:8080/posts', {
-      method: 'POST',
-      body: JSON.stringify(postData),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    setPosts((prev) => [...prev, { ...postData }]);
-  };
+  //     setPosts(data.posts);
+  //     setLoading(false);
+  //   })();
+  // }, []);
 
   return (
     <>
-      {isPosting && (
-        <Modal show={isPosting} onClose={onStopPosting}>
-          <NewPost onCancel={onStopPosting} onAddPost={addPostHandler} />
-        </Modal>
-      )}
-      {!isLoading && posts.length > 0 && (
+      {posts && posts.length > 0 && (
         <ul className={classes.posts}>
           {posts.map((p, index) => (
-            <Post author={p.author} body={p.body} key={index} />
+            <Post key={p.id} id={p.id} body={p.body} author={p.author} />
           ))}
         </ul>
       )}
 
-      {!isLoading && posts.length === 0 && (
-        <div style={{ textAlign: 'center', color: 'white' }}>
-          <h2>There are no posts yet.</h2>
-          <p>Start adding some!</p>
-        </div>
-      )}
-
-      {isLoading && (
-        <div style={{ textAlign: 'center', color: 'white' }}>
-          <h2>Loading posts...</h2>
-        </div>
-      )}
+      {!posts ||
+        (posts.length === 0 && (
+          <div style={{ textAlign: 'center', color: 'white' }}>
+            <h2>There are no posts yet.</h2>
+            <p>Start adding some!</p>
+          </div>
+        ))}
     </>
   );
 };

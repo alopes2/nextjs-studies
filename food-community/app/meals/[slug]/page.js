@@ -4,6 +4,19 @@ import { getMeal } from '@/lib/meals';
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 
+export async function generateMetadata({ slug }) {
+  const meal = await getMeal(slug);
+
+  if (!meal) {
+    notFound();
+  }
+
+  return {
+    title: meal.title,
+    description: meal.summary,
+  };
+}
+
 async function Meal({ slug }) {
   const meal = await getMeal(slug);
 

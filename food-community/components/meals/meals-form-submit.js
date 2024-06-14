@@ -1,5 +1,6 @@
 'use client';
 
+// Will be { useActionState } from 'react' in the future (next 14.30.0 and react 19)
 import { useFormStatus } from 'react-dom';
 
 export default function MealsFormSubmit() {
